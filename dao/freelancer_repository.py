@@ -61,14 +61,15 @@ class FreelancerRepository(ABC):
     def get_tasks_by_project(self, project_id):
         pass
     
-    # @abstractmethod
-    # def process_payment(self, payment):
-    #     pass
+    @abstractmethod
+    def process_payment(self, payment):
+        pass
     
-    # @abstractmethod
-    # def get_payments_by_project(self, project_id):
-    #     pass
+    @abstractmethod
+    def get_payments_by_project(self, project_id):
+        pass
     
-    # @abstractmethod
-    # def get_all_payments(self):
-    #     pass
+    @abstractmethod
+    def get_all_payments(self):
+        pass
+    

@@ -20,6 +20,7 @@ class FreelancerRepositoryImpl(FreelancerRepository):
         self.cursor = self.con.cursor()
 
     def close(self):
+        self.cursor.close()
         self.con = DBConnection.close_connection()
 
     def add_freelancer(self, freelancer):
@@ -153,6 +154,12 @@ class FreelancerRepositoryImpl(FreelancerRepository):
         self.con.commit()
         return True
 
+    def get_project_by_id(self, project_id):
+        query = "SELECT * FROM Projects WHERE project_id = ?"
+        self.cursor.execute(query, (project_id,))
+        row = self.cursor.fetchone()
+        return row
+
     def get_projects_by_freelancer(self, freelancer_id):
         query = "SELECT * FROM Projects WHERE freelancer_id = ?"
         self.cursor.execute(query, (freelancer_id,))
@@ -181,7 +188,7 @@ class FreelancerRepositoryImpl(FreelancerRepository):
                 task.task_name,
                 task.assigned_to,
                 task.due_date,
-                task.task_status
+                task.task_status,
             )
             self.cursor.execute(query, values)
             self.con.commit()
@@ -210,3 +217,46 @@ class FreelancerRepositoryImpl(FreelancerRepository):
             return tasks
         else:
             raise ClientNotFoundException()
+
+    def process_payment(self, payment):
+        if payment.amount < 0:
+            raise InvalidPaymentException()
+        if payment.payment_date.strip() == "":
+            raise InvalidPaymentException()
+        old_project = self.get_project_by_id(payment.project_id)
+        if old_project is None:
+            raise ProjectClosureException("Project not found.")
+        old_client = self.get_client_by_id(payment.client_id)
+        if old_client is None:
+            raise ClientNotFoundException()
+
+        try:
+            query = "INSERT INTO Payments(project_id, client_id, amount, payment_date, payment_status) VALUES(?,?,?,?,?)"
+            values = (
+                payment.project_id,
+                payment.client_id,
+                payment.amount,
+                payment.payment_date,
+                payment.payment_status,
+            )
+            self.cursor.execute(query, values)
+            self.con.commit()
+            return True
+        except Exception as e:
+            print("Error: ", e)
+            return False
+
+    def get_payments_by_project(self, project_id):
+        query = "SELECT * FROM Payments WHERE project_id = ?"
+        self.cursor.execute(query, (project_id,))
+        rows = self.cursor.fetchall()
+        payments = [Payment(*row) for row in rows]
+        return payments 
+    
+    def get_all_payments(self):
+        query = "SELECT * FROM Payments"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        payments = [Payment(*row) for row in rows]
+        return payments 
+        

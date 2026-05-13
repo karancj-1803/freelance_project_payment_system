@@ -18,3 +18,14 @@ class Payment:
         self.amount = amount
         self.payment_date = payment_date
         self.payment_status = payment_status
+        
+    def __str__(self):
+        return (
+            f"Payment ID: {self.payment_id}\n"
+            f"Project ID: {self.project_id}\n"
+            f"Client ID: {self.client_id}\n"
+            f"Amount: {self.amount}\n"
+            f"Payment Date: {self.payment_date}\n"
+            f"Payment Status: {self.payment_status}\n"
+        )
+    
