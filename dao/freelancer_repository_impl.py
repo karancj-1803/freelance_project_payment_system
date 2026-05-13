@@ -1,0 +1,75 @@
+from dao.freelancer_repository import FreelancerRepository
+
+from exception.client_not_found_exception import ClientNotFoundException
+from exception.freelancer_not_found_exception import FreelancerNotFoundException
+from exception.invalid_payment_exception import InvalidPaymentException
+from exception.project_closure_exception import ProjectClosureException
+
+from model.freelancer import Freelancer
+from model.client import Client
+from model.project import Project
+from model.task import Task
+from model.payment import Payment
+
+from util.db_connection import DBConnection
+
+
+class FreelancerRepositoryImpl(FreelancerRepository):
+    def __init__(self):
+        self.con = DBConnection.get_connection()
+        self.cursor = self.con.cursor()
+
+    def close(self):
+        self.con = DBConnection.close_connection()
+
+    def add_freelancer(self, freelancer):
+        try:
+            query = "INSERT INTO Freelancers(name, email, phone, skills, experience_years) VALUES(?,?,?,?,?)"
+            values = (
+                freelancer.name,
+                freelancer.email,
+                freelancer.phone,
+                freelancer.skills,
+                freelancer.experience_years,
+            )
+            self.cursor.execute(query, values)
+
+            self.con.commit()
+            return True
+        except Exception as e:
+            print("Error: ", e)
+            return False
+
+    def get_freelancer_by_id(self, freelancer_id):
+        query = "SELECT * FROM Freelancers WHERE freelancer_id = ?"
+        self.cursor.execute(query, (freelancer_id,))
+        row = self.cursor.fetchone()
+        if row:
+            return Freelancer(*row)
+        else:
+            raise FreelancerNotFoundException()
+
+    def update_freelancer(self, freelancer):
+        old_freelancer = self.get_freelancer_by_id(freelancer.freelancer_id)
+
+        query = "UPDATE Freelancers SET name = ?, email = ?, phone = ?, skills = ?, experience_years = ? WHERE freelancer_id = ?"
+        values = (
+            freelancer.name,
+            freelancer.email,
+            freelancer.phone,
+            freelancer.skills,
+            freelancer.experience_years,
+            freelancer.freelancer_id,
+        )
+        self.cursor.execute(query, values)
+        self.con.commit()
+        return True
+
+    def delete_freelancer(self, freelancer_id):
+        old_freelancer = self.get_freelancer_by_id(freelancer_id)
+
+        query = "DELETE FROM Freelancers WHERE freelancer_id = ?"
+        values = (freelancer_id,)
+        self.cursor.execute(query, values)
+        self.con.commit()
+        return True

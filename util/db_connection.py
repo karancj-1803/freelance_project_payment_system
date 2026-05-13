@@ -29,13 +29,3 @@ class DBConnection:
             return DBConnection.con.close()
         else:
             print("Connection already closed.")
-            
-dbc = DBConnection()
-
-con = DBConnection.get_connection()
-
-print(con)
-
-con = DBConnection.close_connection()
-
-print(con)

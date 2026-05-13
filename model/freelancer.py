@@ -14,13 +14,13 @@ class Freelancer:
         self.phone = phone
         self.skills = skills
         self.experience_years = experience_years
-        
+
     def __str__(self):
         return (
-            f"Freelance ID: {self.freelancer_id}"
-            f"Name: {self.name}"
-            f"Email: {self.email}"
-            f"Phone: {self.phone}"
-            f"Skills: {self.skills}"
-            f"Experienced years: {self.experience_years}"
+            f"Freelance ID: {self.freelancer_id}\n"
+            f"Name: {self.name}\n"
+            f"Email: {self.email}\n"
+            f"Phone: {self.phone}\n"
+            f"Skills: {self.skills}\n"
+            f"Experienced years: {self.experience_years}\n"
         )
