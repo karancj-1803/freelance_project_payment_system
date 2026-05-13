@@ -66,7 +66,6 @@ class FreelancerRepositoryImpl(FreelancerRepository):
 
     def delete_freelancer(self, freelancer_id):
         old_freelancer = self.get_freelancer_by_id(freelancer_id)
-
         query = "DELETE FROM Freelancers WHERE freelancer_id = ?"
         values = (freelancer_id,)
         self.cursor.execute(query, values)
@@ -117,9 +116,59 @@ class FreelancerRepositoryImpl(FreelancerRepository):
 
     def delete_client(self, client_id):
         old_client = self.get_client_by_id(client_id)
-
         query = "DELETE FROM Clients WHERE client_id = ?"
         values = (client_id,)
         self.cursor.execute(query, values)
         self.con.commit()
         return True
+
+    def create_project(self, project):
+        old_freelancer = self.get_freelancer_by_id(project.freelancer_id)
+        old_client = self.get_client_by_id(project.client_id)
+        try:
+            query = "INSERT INTO Projects(client_id, freelancer_id, project_name, description, deadline, status) VALUES(?,?,?,?,?,?)"
+            values = (
+                project.client_id,
+                project.freelancer_id,
+                project.project_name,
+                project.description,
+                project.deadline,
+                project.status,
+            )
+            self.cursor.execute(query, values)
+            self.con.commit()
+            return True
+        except Exception as e:
+            print("Error: ", e)
+            return False
+
+    def update_project_status(self, project_id, status):
+        statuses = ["OPEN", "IN PROGRESS", "COMPLETED", "CANCELLED"]
+        if status not in statuses:
+            raise ProjectClosureException("Invalid status type.")
+
+        query = "UPDATE Projects SET status = ? WHERE project_id = ?"
+        values = (status, project_id)
+        self.cursor.execute(query, values)
+        self.con.commit()
+        return True
+
+    def get_projects_by_freelancer(self, freelancer_id):
+        query = "SELECT * FROM Projects WHERE freelancer_id = ?"
+        self.cursor.execute(query, (freelancer_id,))
+        rows = self.cursor.fetchall()
+        if rows:
+            projects = [Project(*row) for row in rows]
+            return projects
+        else:
+            raise FreelancerNotFoundException()
+        
+    def get_projects_by_client(self, client_id):
+        query = "SELECT * FROM Projects WHERE client_id = ?"
+        self.cursor.execute(query, (client_id,))
+        rows = self.cursor.fetchall()
+        if rows:
+            projects = [Project(*row) for row in rows]
+            return projects
+        else:
+            raise ClientNotFoundException()
