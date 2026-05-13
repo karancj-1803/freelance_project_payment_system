@@ -21,7 +21,7 @@ class FreelancerRepositoryImpl(FreelancerRepository):
 
     def close(self):
         self.cursor.close()
-        self.con = DBConnection.close_connection()
+        DBConnection.close_connection()
 
     def add_freelancer(self, freelancer):
         try:
@@ -47,7 +47,7 @@ class FreelancerRepositoryImpl(FreelancerRepository):
         if row:
             return Freelancer(*row)
         else:
-            raise FreelancerNotFoundException()
+            raise FreelancerNotFoundException(f"Freelancer with ID {freelancer_id} not found.")
 
     def update_freelancer(self, freelancer):
         old_freelancer = self.get_freelancer_by_id(freelancer.freelancer_id)
@@ -97,7 +97,9 @@ class FreelancerRepositoryImpl(FreelancerRepository):
         if row:
             return Client(*row)
         else:
-            raise ClientNotFoundException()
+            raise ClientNotFoundException(
+                f"Client with ID {client_id} not found."
+            )
 
     def update_client(self, client):
         old_client = self.get_client_by_id(client.client_id)
@@ -168,7 +170,7 @@ class FreelancerRepositoryImpl(FreelancerRepository):
             projects = [Project(*row) for row in rows]
             return projects
         else:
-            raise FreelancerNotFoundException()
+            return []
 
     def get_projects_by_client(self, client_id):
         query = "SELECT * FROM Projects WHERE client_id = ?"
@@ -216,7 +218,7 @@ class FreelancerRepositoryImpl(FreelancerRepository):
             tasks = [Task(*row) for row in rows]
             return tasks
         else:
-            raise ClientNotFoundException()
+            return []
 
     def process_payment(self, payment):
         if payment.amount < 0:
@@ -252,11 +254,10 @@ class FreelancerRepositoryImpl(FreelancerRepository):
         rows = self.cursor.fetchall()
         payments = [Payment(*row) for row in rows]
         return payments 
-    
+
     def get_all_payments(self):
         query = "SELECT * FROM Payments"
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
         payments = [Payment(*row) for row in rows]
         return payments 
-        

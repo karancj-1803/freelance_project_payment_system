@@ -26,6 +26,8 @@ class DBConnection:
     def close_connection():
         if DBConnection.con is not None:
             print("Connection closed successfully.")
-            return DBConnection.con.close()
+            DBConnection.con.close()
+            DBConnection.con = None
+            
         else:
             print("Connection already closed.")
