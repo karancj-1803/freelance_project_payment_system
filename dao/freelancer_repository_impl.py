@@ -162,7 +162,7 @@ class FreelancerRepositoryImpl(FreelancerRepository):
             return projects
         else:
             raise FreelancerNotFoundException()
-        
+
     def get_projects_by_client(self, client_id):
         query = "SELECT * FROM Projects WHERE client_id = ?"
         self.cursor.execute(query, (client_id,))
@@ -170,5 +170,43 @@ class FreelancerRepositoryImpl(FreelancerRepository):
         if rows:
             projects = [Project(*row) for row in rows]
             return projects
+        else:
+            raise ClientNotFoundException()
+
+    def add_task(self, task):
+        try:
+            query = "INSERT INTO Tasks(project_id, task_name, assigned_to, due_date, task_status) VALUES(?,?,?,?,?)"
+            values = (
+                task.project_id,
+                task.task_name,
+                task.assigned_to,
+                task.due_date,
+                task.task_status
+            )
+            self.cursor.execute(query, values)
+            self.con.commit()
+            return True
+        except Exception as e:
+            print("Error: ", e)
+            return False
+
+    def update_task_status(self, task_id, task_status):
+        statuses = ["PENDING", "IN PROGRESS", "COMPLETED", "CANCELLED"]
+        if task_status not in statuses:
+            raise ProjectClosureException("Invalid status type.")
+
+        query = "UPDATE Tasks SET task_status = ? WHERE task_id = ?"
+        values = (task_status, task_id)
+        self.cursor.execute(query, values)
+        self.con.commit()
+        return True
+
+    def get_tasks_by_project(self, project_id):
+        query = "SELECT * FROM Tasks WHERE project_id = ?"
+        self.cursor.execute(query, (project_id,))
+        rows = self.cursor.fetchall()
+        if rows:
+            tasks = [Task(*row) for row in rows]
+            return tasks
         else:
             raise ClientNotFoundException()

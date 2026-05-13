@@ -49,17 +49,17 @@ class FreelancerRepository(ABC):
     def get_projects_by_client(self, client_id):
         pass
     
-    # @abstractmethod
-    # def add_task(self, task):
-    #     pass
+    @abstractmethod
+    def add_task(self, task):
+        pass
     
-    # @abstractmethod
-    # def update_task_status(self, task_id, task_status):
-    #     pass
+    @abstractmethod
+    def update_task_status(self, task_id, task_status):
+        pass
     
-    # @abstractmethod
-    # def get_tasks_by_project(self, project_id):
-    #     pass
+    @abstractmethod
+    def get_tasks_by_project(self, project_id):
+        pass
     
     # @abstractmethod
     # def process_payment(self, payment):
