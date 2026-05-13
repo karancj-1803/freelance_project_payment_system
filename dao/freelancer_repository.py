@@ -17,25 +17,25 @@ class FreelancerRepository(ABC):
     def get_freelancer_by_id(self, freelancer_id):
         pass
     
-    # @abstractmethod
-    # def add_client(self, client):
-    #     pass
+    @abstractmethod
+    def add_client(self, client):
+        pass
     
-    # @abstractmethod
-    # def update_client(self, client):
-    #     pass
+    @abstractmethod
+    def update_client(self, client):
+        pass
     
-    # @abstractmethod
-    # def delete_client(self, client_id):
-    #     pass
+    @abstractmethod
+    def delete_client(self, client_id):
+        pass
     
-    # @abstractmethod
-    # def get_client_by_id(self, client_id):
-    #     pass
+    @abstractmethod
+    def get_client_by_id(self, client_id):
+        pass
     
-    # @abstractmethod
-    # def create_project(self, project):
-    #     pass
+    @abstractmethod
+    def create_project(self, project):
+        pass
     
     # @abstractmethod
     # def update_project_status(self, project_id, status):

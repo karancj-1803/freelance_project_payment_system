@@ -33,7 +33,6 @@ class FreelancerRepositoryImpl(FreelancerRepository):
                 freelancer.experience_years,
             )
             self.cursor.execute(query, values)
-
             self.con.commit()
             return True
         except Exception as e:
@@ -70,6 +69,57 @@ class FreelancerRepositoryImpl(FreelancerRepository):
 
         query = "DELETE FROM Freelancers WHERE freelancer_id = ?"
         values = (freelancer_id,)
+        self.cursor.execute(query, values)
+        self.con.commit()
+        return True
+
+    def add_client(self, client):
+        try:
+            query = "INSERT INTO Clients(name, email, phone, company, address) VALUES(?,?,?,?,?)"
+            values = (
+                client.name,
+                client.email,
+                client.phone,
+                client.company,
+                client.address,
+            )
+            self.cursor.execute(query, values)
+            self.con.commit()
+            return True
+        except Exception as e:
+            print("Error: ", e)
+            return False
+
+    def get_client_by_id(self, client_id):
+        query = "SELECT * FROM Clients WHERE client_id = ?"
+        self.cursor.execute(query, (client_id,))
+        row = self.cursor.fetchone()
+        if row:
+            return Client(*row)
+        else:
+            raise ClientNotFoundException()
+
+    def update_client(self, client):
+        old_client = self.get_client_by_id(client.client_id)
+
+        query = "UPDATE Clients SET name = ?, email = ?, phone = ?, company = ?, address = ? WHERE client_id = ?"
+        values = (
+            client.name,
+            client.email,
+            client.phone,
+            client.company,
+            client.address,
+            client.client_id,
+        )
+        self.cursor.execute(query, values)
+        self.con.commit()
+        return True
+
+    def delete_client(self, client_id):
+        old_client = self.get_client_by_id(client_id)
+
+        query = "DELETE FROM Clients WHERE client_id = ?"
+        values = (client_id,)
         self.cursor.execute(query, values)
         self.con.commit()
         return True

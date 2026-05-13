@@ -17,10 +17,10 @@ class Client:
     
     def __str__(self):
         return (
-            f"Client ID: {self.client_id}"
-            f"Name: {self.name}"
-            f"Email: {self.email}"
-            f"Phone: {self.phone}"
-            f"Company: {self.company}"
-            f"Address: {self.address}"
+            f"Client ID: {self.client_id}\n"
+            f"Name: {self.name}\n"
+            f"Email: {self.email}\n"
+            f"Phone: {self.phone}\n"
+            f"Company: {self.company}\n"
+            f"Address: {self.address}\n"
         )
